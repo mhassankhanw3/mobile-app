@@ -5,7 +5,9 @@ import {
   Layout,
   StyleService,
   Text,
+  IconRegistry,
 } from '@ui-kitten/components';
+import {EvaIconsPack} from '@ui-kitten/eva-icons';
 import {Signup} from './components/Signup';
 import {Login} from './components/Login';
 import {StyleSheet, View} from 'react-native';
@@ -13,22 +15,21 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import AuthContext from './context/Main';
 import Dashboard from './components/Dashboard';
+import PersonalInfo from './components/PersonalInfo';
+import {Form} from './components/Form';
 
 const Stack = createNativeStackNavigator();
 
 const App = () => (
   <NavigationContainer>
     <Stack.Navigator>
-      <Stack.Screen
-        name="Signup"
-        component={Signup}
-        // options={{title: 'Welcome'}}
-      />
+      {/* <Stack.Screen name="Form" component={Form} /> */}
+      <Stack.Screen name="PersonalInfo" component={PersonalInfo} />
+      {/* <Stack.Screen name="Signup" component={Signup} />
       <Stack.Screen name="Login" component={Login} />
-      <Stack.Screen name="Dashboard" component={Dashboard} />
+      <Stack.Screen name="Dashboard" component={Dashboard} /> */}
     </Stack.Navigator>
   </NavigationContainer>
-
   // <Layout
   //   style={{
   //     flex: 1,
@@ -54,6 +55,7 @@ const styles = StyleSheet.create({
 
 export default () => (
   <AuthContext>
+    <IconRegistry icons={EvaIconsPack} />
     <ApplicationProvider {...eva} theme={eva.light}>
       <App />
     </ApplicationProvider>

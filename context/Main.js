@@ -1,29 +1,33 @@
 import React, {useState, createContext, useContext} from 'react';
 // import firebase from '../firebase/config';
-import auth, {firebase} from '@react-native-firebase/auth';
-// import {Login} from '../components/Login';
-// import Dashboard from '../components/Dashboard';
+import auth from '@react-native-firebase/auth';
+import firebase from '@react-native-firebase/app';
+
 import {
   getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
 } from 'firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+import keys from '../android/app/google-services.json';
 
 const MyContext = createContext();
 export const useMainContext = () => useContext(MyContext);
-export default MainContextProvider = (props, {navigation}) => {
+export default MainContextProvider = props => {
   const [email, setEmail] = useState('');
   const [logout, setLogout] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  const newUser = async (email, password) => {
+  const newUser = async (email, password, navigation) => {
     await auth()
       .createUserWithEmailAndPassword(email, password)
       .then(() => {
         console.log('User account created & signed in!');
+        navigation.navigate('Login');
+        // return true;
       })
       .catch(error => {
         if (error.code === 'auth/email-already-in-use') {
@@ -33,16 +37,18 @@ export default MainContextProvider = (props, {navigation}) => {
         if (error.code === 'auth/invalid-email') {
           console.log('That email address is invalid!');
         }
+        navigation.navigate('Signup');
 
         console.error(error);
+        // return false;
       });
   };
-  const signIn = async (email, password) => {
+  const signIn = async (email, password, navigation) => {
     await auth()
       .signInWithEmailAndPassword(email, password)
       .then(() => {
         console.log('User account created & signed in!');
-        navigation.navigate('Dashboard');
+        navigation.navigate('PersonalInfo');
       })
       .catch(error => {
         if (error.code === 'auth/email-already-in-use') {
@@ -56,6 +62,35 @@ export default MainContextProvider = (props, {navigation}) => {
         console.error(error);
       });
   };
+  // let newKey = keys.project_info.project_id;
+  const config = {
+    clientId:
+      '1020581952427-6jh87650pl54bkh6d162d4kumjfur14n.apps.googleusercontent.com',
+    appId: '1:1020581952427:android:18cddae179af29c0fbb0ee',
+    apiKey: 'AIzaSyAwmTenNm-lvxpQnTLKtT4FxaNR0Ccruiw',
+    databaseURL: 'x',
+    storageBucket: 'mobileapp-88504.appspot.com',
+    messagingSenderId: 'x',
+    projectId: 'mobileapp-88504',
+
+    // enable persistence by adding the below flag
+    persistence: true,
+  };
+
+  const Form = async state => {
+    await firebase.initializeApp(config);
+    await firestore()
+      .collection('Registration')
+      .add({
+        name: state.name,
+        age: state.age,
+        noOfChildren: state.noOfChildren,
+      })
+      .then(() => {
+        console.log('User added!');
+      });
+  };
+
   // const signIn = async (email, password) => {
   //   await firebase
   //     .auth()
@@ -115,6 +150,7 @@ export default MainContextProvider = (props, {navigation}) => {
         func: {
           newUser,
           signIn,
+          Form,
           // logOut,
         },
       }}>

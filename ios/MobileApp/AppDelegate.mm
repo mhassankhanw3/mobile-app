@@ -1,5 +1,5 @@
 #import "AppDelegate.h"
-
+#import "<Firebase.h>"
 #import <React/RCTBundleURLProvider.h>
 
 @implementation AppDelegate
@@ -8,6 +8,16 @@
 {
   self.moduleName = @"MobileApp";
   // You can add your custom initial props in the dictionary below.
+
+  if([FIRApp defaultApp] == nil)
+  {
+    [FIRApp configure]
+  }
+
+
+
+
+
   // They will be passed down to the ViewController used by React Native.
   self.initialProps = @{};
 

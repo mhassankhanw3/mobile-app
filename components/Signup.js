@@ -9,43 +9,49 @@ export const Signup = ({navigation}) => {
   const [password, setPassword] = React.useState('');
   const {func} = useMainContext();
   const submitHandle = () => {
-    func.newUser(email, password);
-    navigation.navigate('Login');
+    func.newUser(email, password, navigation);
   };
   return (
-    <Layout style={{width: '100%'}}>
+    <Layout
+      style={{
+        width: '100%',
+        paddingTop: 50,
+        backgroundColor: 'white',
+        height: '100%',
+      }}>
       <View>
         <Text style={styles.head}>Sign Up</Text>
       </View>
-      <View>
-        <Input
-          style={styles.input}
-          placeholder="Enter your Email"
-          value={email}
-          onChangeText={nextValue => setEmail(nextValue)}
-        />
-        <Input
-          style={styles.input}
-          placeholder="Enter your Password"
-          value={password}
-          onChangeText={nextValue => setPassword(nextValue)}
-        />
-        <Button style={styles.button} onPress={submitHandle}>
-          Sign up
-        </Button>
-      </View>
-      {/* <Text style={styles.logintxt}>or</Text> */}
-      <View
-        style={{
-          width: '100%',
-          marginTop: 10,
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          //   justifyContent: 'center',
-        }}>
-        <Text>Already have an account?</Text>
-        <Text style={styles.logintxtlink}>login</Text>
+      <View style={{padding: 20}}>
+        <View>
+          <Input
+            style={styles.input}
+            placeholder="Enter your Email"
+            value={email}
+            onChangeText={nextValue => setEmail(nextValue)}
+          />
+          <Input
+            style={styles.input}
+            placeholder="Enter your Password"
+            value={password}
+            onChangeText={nextValue => setPassword(nextValue)}
+          />
+          <Button style={styles.button} onPress={submitHandle}>
+            Sign up
+          </Button>
+        </View>
+        <View
+          style={{
+            width: '100%',
+            marginTop: 10,
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            //   justifyContent: 'center',
+          }}>
+          <Text>Already have an account?</Text>
+          <Text style={styles.logintxtlink}>login</Text>
+        </View>
       </View>
     </Layout>
   );

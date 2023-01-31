@@ -10,8 +10,8 @@ export const Login = ({navigation}) => {
   const {func} = useMainContext();
 
   const submitHandle = () => {
-    func.newUser(email, password);
-    navigation.navigate('Dashboard');
+    func.signIn(email, password, navigation);
+    // navigation.navigate('Dashboard');
   };
 
   return (
