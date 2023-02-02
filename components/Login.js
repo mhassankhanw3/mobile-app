@@ -1,37 +1,46 @@
 import React from 'react';
-import {StyleSheet} from 'react-native';
+import {StyleSheet, View, Text} from 'react-native';
 import {Input, Layout, Button} from '@ui-kitten/components';
 import {useMainContext} from '../context/Main';
+import ScreenNavigator from './ScreenNavigator';
 
 export const Login = ({navigation}) => {
-  const [value, setValue] = React.useState('');
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
-  const {func} = useMainContext();
+  const {func, user} = useMainContext();
 
   const submitHandle = () => {
     func.signIn(email, password, navigation);
     // navigation.navigate('Dashboard');
   };
-
+  // if (user) {
+  //   navigation.navigate('Registeration');
+  // } else {
+  //   navigation.navigate('Login');
+  // }
   return (
-    <Layout style={styles.container}>
-      <Input
-        style={styles.input}
-        placeholder="Enter your Email"
-        value={email}
-        onChangeText={nextValue => setEmail(nextValue)}
-      />
-      <Input
-        style={styles.input}
-        placeholder="Enter your Password"
-        value={password}
-        onChangeText={nextValue => setPassword(nextValue)}
-      />
-      <Button style={styles.button} onPress={submitHandle}>
-        Login
-      </Button>
-    </Layout>
+    <ScreenNavigator>
+      <Layout style={styles.container}>
+        <Input
+          style={styles.input}
+          placeholder="Enter your Email"
+          value={email}
+          onChangeText={nextValue => setEmail(nextValue)}
+        />
+        <Input
+          style={styles.input}
+          placeholder="Enter your Password"
+          value={password}
+          onChangeText={nextValue => setPassword(nextValue)}
+        />
+        <Button style={styles.button} onPress={submitHandle}>
+          Login
+        </Button>
+        <View>
+          <Text>or sign up</Text>
+        </View>
+      </Layout>
+    </ScreenNavigator>
   );
 };
 
