@@ -3,7 +3,7 @@ import {StyleSheet, View, Text} from 'react-native';
 import {Input, Layout, Button} from '@ui-kitten/components';
 import {useMainContext} from '../context/Main';
 import ScreenNavigator from './ScreenNavigator';
-
+// import {useNavigation} from '@react-navigation/native';
 export const Login = ({navigation}) => {
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
@@ -11,13 +11,11 @@ export const Login = ({navigation}) => {
 
   const submitHandle = () => {
     func.signIn(email, password, navigation);
-    // navigation.navigate('Dashboard');
   };
-  // if (user) {
-  //   navigation.navigate('Registeration');
-  // } else {
-  //   navigation.navigate('Login');
-  // }
+  // const navigation = useNavigation();
+  const goSignUp = () => {
+    navigation?.navigate('Signup');
+  };
   return (
     <ScreenNavigator>
       <Layout style={styles.container}>
@@ -36,8 +34,25 @@ export const Login = ({navigation}) => {
         <Button style={styles.button} onPress={submitHandle}>
           Login
         </Button>
-        <View>
-          <Text>or sign up</Text>
+        <View
+          style={{
+            marginTop: 10,
+            textAlign: 'center',
+            width: '100%',
+            marginLeft: 'auto',
+            marginRight: 'auto',
+          }}>
+          <Text style={{textAlign: 'center'}}>don not have an account?</Text>
+          <Text
+            style={{
+              textAlign: 'center',
+              textDecorationLine: 'underline',
+              color: '#2563eb',
+              fontSize: 16,
+            }}
+            onPress={goSignUp}>
+            sign up
+          </Text>
         </View>
       </Layout>
     </ScreenNavigator>
@@ -48,6 +63,7 @@ const styles = StyleSheet.create({
   container: {
     padding: 10,
     border: '1px',
+    backgroundColor: 'white',
     // borderWidth: 1,
     // borderColor: 'black',
   },

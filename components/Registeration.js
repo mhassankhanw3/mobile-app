@@ -19,6 +19,7 @@ import {Note} from './Note';
 import UploadFile from './UploadFile';
 import ScreenNavigator from './ScreenNavigator';
 import {NavigationContainer} from '@react-navigation/native';
+import UploadDocument from './UploadDocument';
 
 export default function Registeration(navigation) {
   const [selectedIndex, setSelectedIndex] = React.useState('Gender');
@@ -88,6 +89,9 @@ export default function Registeration(navigation) {
     requirFamilyStatus: '',
     requirAnyOtherRequir: '',
     requrHearAbout: '',
+    imgUrl: '',
+    fileUrl: '',
+    documentUrl: '',
   });
 
   const {func, user} = useMainContext();
@@ -665,7 +669,7 @@ export default function Registeration(navigation) {
           </View>
 
           <View style={styles.compoCall}>
-            <UploadImg />
+            <UploadImg setState={setState} state={state} />
           </View>
           <View>
             <Text
@@ -690,7 +694,11 @@ export default function Registeration(navigation) {
             </Text>
           </View>
           <View>
-            <UploadFile title="CNIC or Birth Certificate " />
+            <UploadFile
+              title="CNIC or Birth Certificate "
+              setState={setState}
+              state={state}
+            />
           </View>
           <View>
             <Text
@@ -715,7 +723,11 @@ export default function Registeration(navigation) {
             </Text>
           </View>
           <View>
-            <UploadFile title="Pay Slip and Visiting Card" />
+            <UploadDocument
+              title="Pay Slip and Visiting Card"
+              setState={setState}
+              state={state}
+            />
           </View>
           <View>
             <Text

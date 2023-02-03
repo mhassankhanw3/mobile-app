@@ -7,7 +7,11 @@ export default function ScreenNavigator({children}) {
   const {user} = useMainContext();
   const navigation = useNavigation();
   useEffect(() => {
-    if (!user) navigation?.navigate('Login');
+    if (!user) {
+      navigation?.navigate('Login');
+    } else {
+      navigation?.navigate('Registeration');
+    }
   }, [user]);
 
   return <View>{children}</View>;

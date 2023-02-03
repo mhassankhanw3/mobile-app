@@ -146,6 +146,9 @@ export default MainContextProvider = props => {
         requirFamilyStatus: state.requirFamilyStatus,
         requirAnyOtherRequir: state.requirAnyOtherRequir,
         requrHearAbout: state.requrHearAbout,
+        imgUrl: state.imgUrl,
+        fileUrl: state.fileUrl,
+        documentUrl: state.documentUrl,
       })
       .then(() => {
         console.log('User added!');

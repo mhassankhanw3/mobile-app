@@ -16,9 +16,9 @@ import getPath from '@flyerhq/react-native-android-uri-path';
 // import * as FilePicker from 'react-native-file-picker';
 import DocumentPicker, {types} from 'react-native-document-picker';
 
-export default function UploadFile({title, state, setState}) {
-  const [fileResponse, setFileResponse] = useState([]);
-  const [newUrl, setNewUrl] = useState('');
+export default function UploadDocument({title, state, setState}) {
+  const [documentResponse, setDocumentResponse] = useState([]);
+  const [mainUrl, setMainUrl] = useState('');
 
   const handleDocumentSelection = useCallback(async () => {
     try {
@@ -26,18 +26,16 @@ export default function UploadFile({title, state, setState}) {
         presentationStyle: 'fullScreen',
         type: [types.pdf],
       });
-      setFileResponse(response);
+      setDocumentResponse(response);
       const reference = storage().ref(response[0].name);
       const path = getPath(response[0].uri);
       await reference.putFile(path);
       const url = await reference.getDownloadURL();
-      setNewUrl(url);
-      setState({...state, fileUrl: url});
-      console.log(state, 'sate');
-      // setNewUrl(url);
-      console.log(url, 'url');
-      console.log(reference, 'reference');
-      console.log(response, 'response');
+      setMainUrl(url);
+      // setMainUrl(url);
+      setState({...state, documentUrl: url});
+      console.log(state, 'state');
+      // console.log(response, 'response');
     } catch (err) {
       console.warn(err);
     }
@@ -48,9 +46,9 @@ export default function UploadFile({title, state, setState}) {
       <View style={styles.dropfiles}>
         <Text style={styles.dragtxt}>Drop Files here or</Text>
         <Text style={{textAlign: 'center', fontSize: 12, color: '#dc2626'}}>
-          {newUrl}
+          {mainUrl}
         </Text>
-        {fileResponse.map((file, index) => (
+        {documentResponse.map((file, index) => (
           <Text
             key={index.toString()}
             style={styles.uri}

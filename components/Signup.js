@@ -11,6 +11,9 @@ export const Signup = ({navigation}) => {
   const submitHandle = () => {
     func.newUser(email, password, navigation);
   };
+  const goLoginPage = () => {
+    navigation?.navigate('Login');
+  };
   return (
     <Layout
       style={{
@@ -50,7 +53,9 @@ export const Signup = ({navigation}) => {
             //   justifyContent: 'center',
           }}>
           <Text>Already have an account?</Text>
-          <Text style={styles.logintxtlink}>login</Text>
+          <Text style={styles.logintxtlink} onPress={goLoginPage}>
+            login
+          </Text>
         </View>
       </View>
     </Layout>

@@ -1,4 +1,6 @@
 import React, {useState} from 'react';
+import storage from '@react-native-firebase/storage';
+import {utils} from '@react-native-firebase/app';
 import {
   Text,
   View,
@@ -10,8 +12,9 @@ import {
 } from 'react-native';
 import * as ImagePicker from 'react-native-image-picker';
 
-export default function UploadImg() {
+export default function UploadImg({state, setState}) {
   const [photo, setPhoto] = useState('');
+  const [newImgUrl, setNewImgUrl] = useState('');
   let options = {
     saveToPhotos: true,
     mediaType: 'photo',
@@ -19,14 +22,35 @@ export default function UploadImg() {
   const handleChoose = async () => {
     const result = await ImagePicker.launchImageLibrary(options);
     setPhoto(result.assets[0].uri);
+    const reference = storage().ref(result.assets[0].fileName);
+    // const pathToFile = `${utils.FilePath.PICTURES_DIRECTORY}/black-t-shirt-sm.png`;
+    await reference.putFile(result.assets[0].uri);
+    const url = await reference.getDownloadURL();
+    setNewImgUrl(url);
+    setState({...state, imgUrl: url});
+    console.log(result);
+    console.log(url);
   };
+
   return (
     <View>
       <Text style={styles.filesText}>2 Latest Pictures</Text>
       <View style={styles.dropfiles}>
         <Text style={styles.dragtxt}>Drop Files here or</Text>
+        <Text style={{textAlign: 'center', fontSize: 12, color: '#dc2626'}}>
+          {newImgUrl}
+        </Text>
         {photo ? (
-          <Image style={{width: 300, height: 300}} source={{uri: photo}} />
+          <Image
+            style={{
+              width: 200,
+              height: 200,
+              marginLeft: 'auto',
+              marginRight: 'auto',
+              marginTop: 10,
+            }}
+            source={{uri: photo}}
+          />
         ) : (
           ''
         )}
@@ -37,6 +61,13 @@ export default function UploadImg() {
     </View>
   );
 }
+
+// onPress={async () => {
+//   // path to existing file on filesystem
+//   const pathToFile = ${utils.FilePath.PICTURES_DIRECTORY}/black-t-shirt-sm.png;
+//   // uploads file
+//   await reference.putFile(pathToFile);
+// }}
 
 const styles = StyleSheet.create({
   button: {
