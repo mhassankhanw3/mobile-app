@@ -12,7 +12,6 @@ export const Login = ({navigation}) => {
   const submitHandle = () => {
     func.signIn(email, password, navigation);
   };
-  // const navigation = useNavigation();
   const goSignUp = () => {
     navigation?.navigate('Signup');
   };
@@ -42,7 +41,7 @@ export const Login = ({navigation}) => {
             marginLeft: 'auto',
             marginRight: 'auto',
           }}>
-          <Text style={{textAlign: 'center'}}>don not have an account?</Text>
+          <Text style={{textAlign: 'center'}}>do not have an account?</Text>
           <Text
             style={{
               textAlign: 'center',
@@ -64,6 +63,7 @@ const styles = StyleSheet.create({
     padding: 10,
     border: '1px',
     backgroundColor: 'white',
+    height: '100%',
     // borderWidth: 1,
     // borderColor: 'black',
   },

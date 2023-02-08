@@ -9,17 +9,24 @@ import {
   Layout,
   StatusBar,
 } from 'react-native';
+import {Spinner} from '@ui-kitten/components';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import storage from '@react-native-firebase/storage';
 import {utils} from '@react-native-firebase/app';
 import getPath from '@flyerhq/react-native-android-uri-path';
 // import * as FilePicker from 'react-native-file-picker';
 import DocumentPicker, {types} from 'react-native-document-picker';
-
-export default function UploadDocument({title, state, setState}) {
+import {useMainContext} from '../context/Main';
+export default function UploadDocument({
+  title,
+  state,
+  setState,
+  documentUrlResponse,
+  setDocumentUrlResponse,
+}) {
   const [documentResponse, setDocumentResponse] = useState([]);
   const [mainUrl, setMainUrl] = useState('');
-
+  const [loading, setLoading] = useState(false);
   const handleDocumentSelection = useCallback(async () => {
     try {
       const response = await DocumentPicker.pick({
@@ -27,15 +34,17 @@ export default function UploadDocument({title, state, setState}) {
         type: [types.pdf],
       });
       setDocumentResponse(response);
+      setLoading(true);
       const reference = storage().ref(response[0].name);
       const path = getPath(response[0].uri);
       await reference.putFile(path);
       const url = await reference.getDownloadURL();
-      setMainUrl(url);
       // setMainUrl(url);
-      setState({...state, documentUrl: url});
-      console.log(state, 'state');
-      // console.log(response, 'response');
+
+      setTimeout(() => {
+        setDocumentUrlResponse(url);
+        setLoading(false);
+      }, 1000);
     } catch (err) {
       console.warn(err);
     }
@@ -45,18 +54,32 @@ export default function UploadDocument({title, state, setState}) {
       <Text style={styles.filesText}>{title}</Text>
       <View style={styles.dropfiles}>
         <Text style={styles.dragtxt}>Drop Files here or</Text>
-        <Text style={{textAlign: 'center', fontSize: 12, color: '#dc2626'}}>
+        {/* <Text style={{textAlign: 'center', fontSize: 12, color: '#dc2626'}}>
           {mainUrl}
-        </Text>
-        {documentResponse.map((file, index) => (
-          <Text
-            key={index.toString()}
-            style={styles.uri}
-            numberOfLines={1}
-            ellipsizeMode={'middle'}>
-            <Text style={styles.upload}>Uploaded:</Text> {file?.name}
-          </Text>
-        ))}
+        </Text> */}
+
+        {loading ? (
+          <View
+            style={{
+              marginLeft: 'auto',
+              marginRight: 'auto',
+              marginTop: 10,
+              marginBottom: 10,
+            }}>
+            <Spinner size="small" status="warning" />
+          </View>
+        ) : (
+          documentUrlResponse &&
+          documentResponse.map((file, index) => (
+            <Text
+              key={index.toString()}
+              style={styles.uri}
+              numberOfLines={1}
+              ellipsizeMode={'middle'}>
+              <Text style={styles.upload}>Uploaded:</Text> {file?.name}
+            </Text>
+          ))
+        )}
 
         {/* {photo ? (
         <Image style={{width: 300, height: 300}} source={{uri: photo}} />

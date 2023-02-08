@@ -19,6 +19,8 @@ export default MainContextProvider = props => {
   const [email, setEmail] = useState('');
   const [logout, setLogout] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [visible, setVisible] = React.useState(false);
+  const [message, setMessage] = useState(false);
   const [error, setError] = useState(false);
   const [success, setSuccess] = useState(false);
 
@@ -27,7 +29,7 @@ export default MainContextProvider = props => {
       .createUserWithEmailAndPassword(email, password)
       .then(res => {
         console.log('User account created & signed in!');
-        // navigation.navigate('Login');
+        navigation.navigate('Login');
         console.log(res, 'res');
         // return true;
       })
@@ -39,7 +41,7 @@ export default MainContextProvider = props => {
         if (error.code === 'auth/invalid-email') {
           console.log('That email address is invalid!');
         }
-        // navigation.navigate('Signup');
+        navigation.navigate('Signup');
 
         console.error(error);
         // return false;
@@ -87,7 +89,13 @@ export default MainContextProvider = props => {
     }
     // ...
   }, []);
-  const Form = async state => {
+  const Form = async (
+    state,
+    fileUrlResponse,
+    documentUrlResponse,
+    imgUrlResponse,
+    newImgUrlResponse,
+  ) => {
     await firestore()
       .collection('Registration')
       .doc(user.uid)
@@ -146,12 +154,18 @@ export default MainContextProvider = props => {
         requirFamilyStatus: state.requirFamilyStatus,
         requirAnyOtherRequir: state.requirAnyOtherRequir,
         requrHearAbout: state.requrHearAbout,
-        imgUrl: state.imgUrl,
-        fileUrl: state.fileUrl,
-        documentUrl: state.documentUrl,
+        imgUrlResponse: imgUrlResponse,
+        newImgUrlResponse: newImgUrlResponse,
+        fileUrlResponse: fileUrlResponse,
+        documentUrlResponse: documentUrlResponse,
       })
       .then(() => {
         console.log('User added!');
+        // setLoading(true);
+      })
+      .catch(error => {
+        // setLoading(false);
+        console.log(error, 'error');
       });
   };
 
@@ -243,12 +257,15 @@ export default MainContextProvider = props => {
         setLogout: setLogout,
         user: user,
         setUser: setUser,
+        message: message,
+        setMessage: setMessage,
+        visible: visible,
+        setVisible: setVisible,
         func: {
           newUser,
           signIn,
           Form,
           Logout,
-          // logOut,
         },
       }}>
       {children}

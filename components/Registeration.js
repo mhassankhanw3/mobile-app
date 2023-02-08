@@ -1,5 +1,13 @@
 import React, {useState} from 'react';
-import {StyleSheet, View, Text, ScrollView, Pressable} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  ScrollView,
+  Pressable,
+  Alert,
+  Image,
+} from 'react-native';
 import {
   Layout,
   Select,
@@ -9,6 +17,10 @@ import {
   Datepicker,
   Icon,
   Button,
+  Spinner,
+  Card,
+  Avatar,
+  Modal,
 } from '@ui-kitten/components';
 import moment from 'moment';
 import {useMainContext} from '../context/Main';
@@ -20,17 +32,22 @@ import UploadFile from './UploadFile';
 import ScreenNavigator from './ScreenNavigator';
 import {NavigationContainer} from '@react-navigation/native';
 import UploadDocument from './UploadDocument';
-
-export default function Registeration(navigation) {
+const imageUrl =
+  'https://upload.wikimedia.org/wikipedia/commons/3/36/Hopetoun_falls.jpg';
+export default function Registeration() {
   const [selectedIndex, setSelectedIndex] = React.useState('Gender');
   const [defaultSingle, setDefaultSingle] = React.useState('Single');
   const [requirGender, setRequirGender] = React.useState('Gender');
-  const [loading, setLoading] = useState(false);
   const [value, setValue] = React.useState('');
   const [selectedCountry, setSelectedCountry] = useState('Pakistan');
   const [selectedHouse, setSelectedHouse] = useState('Select');
   const [selectedRent, setSelectedRent] = useState('Select');
   const [requrHearAbout, setRequrHearAbout] = useState('Newspaper Ad');
+  const [fileUrlResponse, setFileUrlResponse] = useState('');
+  const [documentUrlResponse, setDocumentUrlResponse] = useState('');
+  const [imgUrlResponse, setImgUrlResponse] = useState('');
+  const [newImgUrlResponse, setNewImgUrlResponse] = useState('');
+
   // const [requrHearAbout, setRequrHearAbout] = useState('Newspaper Ad');
   // const [date, setDate] = React.useState(new Date());
   const [state, setState] = useState({
@@ -89,15 +106,49 @@ export default function Registeration(navigation) {
     requirFamilyStatus: '',
     requirAnyOtherRequir: '',
     requrHearAbout: '',
-    imgUrl: '',
-    fileUrl: '',
-    documentUrl: '',
   });
 
-  const {func, user} = useMainContext();
+  const {func, user, loading, setLoading, message, setMessage} =
+    useMainContext();
   const onSubmit = () => {
-    func.Form(state);
     setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      func.Form(
+        state,
+        fileUrlResponse,
+        documentUrlResponse,
+        imgUrlResponse,
+        newImgUrlResponse,
+      );
+      if (
+        (func.Form =
+          imgUrlResponse ||
+          func.Form == newImgUrlResponse ||
+          func.Form === documentUrlResponse ||
+          func.Form === fileUrlResponse)
+      ) {
+        console.log('Successfull');
+        setMessage(false);
+        Alert.alert('Submit', 'Your Form has been submitted', [
+          {text: 'OK', onPress: () => console.log('OK Pressed')},
+        ]);
+      } else {
+        console.log('Error');
+        Alert.alert('Error', 'Please fill the required Fields', [
+          {
+            text: 'Cancel',
+            onPress: () => console.log('Cancel Pressed'),
+            style: 'cancel',
+          },
+          {text: 'OK', onPress: () => console.log('OK Pressed')},
+        ]);
+        setMessage(true);
+      }
+    }, 5000);
+    // setLoading(false);
+    // setVisible(false);
+    // setMessage(true);
   };
   const logout = navigation => {
     func.Logout(navigation);
@@ -110,12 +161,32 @@ export default function Registeration(navigation) {
     'Google Seacrh',
     'Reference',
   ];
-  const marriredStatus = ['Single', 'Married', 'Divorced', 'Material Status'];
+  const marriredStatus = ['Single', 'Married', 'Divorced'];
 
   return (
     <ScreenNavigator>
       <ScrollView>
         <Layout style={styles.container} level="1">
+          <View
+            style={{
+              width: '100%',
+              marginLeft: 'auto',
+              marginRight: 'auto',
+              marginBottom: 30,
+            }}>
+            <Image
+              style={{
+                width: 300,
+                height: 160,
+                marginLeft: 'auto',
+                marginRight: 'auto',
+                marginTop: 10,
+              }}
+              source={{
+                uri: 'https://d21b0h47110qhi.cloudfront.net/image/logo-copy-0jik8m8VSXvJcvH.png',
+              }}
+            />
+          </View>
           <View style={styles.heading}>
             <Text style={styles.headText}>Fill up the</Text>
             <Text style={styles.headregister}>REGISTRATION FORM</Text>
@@ -125,7 +196,7 @@ export default function Registeration(navigation) {
                 flexDirection: 'row',
                 alignItems: 'center',
                 width: '100%',
-                marginTop: 30,
+                marginTop: 10,
               }}>
               <Text>
                 "<Text style={{color: '#c02b0a', fontSize: 10}}>+</Text>"
@@ -669,7 +740,14 @@ export default function Registeration(navigation) {
           </View>
 
           <View style={styles.compoCall}>
-            <UploadImg setState={setState} state={state} />
+            <UploadImg
+              imgUrlResponse={imgUrlResponse}
+              setImgUrlResponse={setImgUrlResponse}
+              newImgUrlResponse={newImgUrlResponse}
+              setNewImgUrlResponse={setNewImgUrlResponse}
+              // setState={setState}
+              // state={state}
+            />
           </View>
           <View>
             <Text
@@ -696,8 +774,10 @@ export default function Registeration(navigation) {
           <View>
             <UploadFile
               title="CNIC or Birth Certificate "
-              setState={setState}
-              state={state}
+              // setState={setState}
+              // state={state}
+              fileUrlResponse={fileUrlResponse}
+              setFileUrlResponse={setFileUrlResponse}
             />
           </View>
           <View>
@@ -725,8 +805,10 @@ export default function Registeration(navigation) {
           <View>
             <UploadDocument
               title="Pay Slip and Visiting Card"
-              setState={setState}
-              state={state}
+              documentUrlResponse={documentUrlResponse}
+              setDocumentUrlResponse={setDocumentUrlResponse}
+              // setState={setState}
+              // state={state}
             />
           </View>
           <View>
@@ -751,8 +833,32 @@ export default function Registeration(navigation) {
             </Text>
           </View>
           <Pressable style={styles.button} onPress={onSubmit}>
+            {/* <View
+              style={{
+                position: 'absolute',
+                left: 95,
+              }}>
+             
+            </View> */}
             <Text style={styles.textBtn}>Submit</Text>
           </Pressable>
+          {loading && (
+            <Modal
+              visible={loading}
+              backdropStyle={styles.backdrop}
+              onBackdropPress={() => setLoading(false)}>
+              {/* <Card disabled={true}> */}
+              {/* <Spinner status="info" size="giant" /> */}
+              <View style={styles.controlContainer}>
+                <Spinner status="control" size="giant" />
+              </View>
+              {/* <Text style={{textAlign: 'center', marginBottom: 10}}>
+                User Added! 😊
+              </Text>
+              <Button onPress={() => setVisible(false)}>DISMISS</Button> */}
+              {/* </Card> */}
+            </Modal>
+          )}
         </Layout>
       </ScrollView>
     </ScreenNavigator>
@@ -760,6 +866,23 @@ export default function Registeration(navigation) {
 }
 
 const styles = StyleSheet.create({
+  controlContainer: {
+    borderRadius: 4,
+    padding: 12,
+    backgroundColor: '#ffd909',
+  },
+  cross: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '70%',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+  },
+  backdrop: {
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
   container: {
     height: '100%',
     backgroundColor: 'white',
@@ -859,7 +982,10 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     elevation: 1,
     backgroundColor: '#ffd909',
-    width: 110,
+    width: '100%',
+    // display: 'flex',
+    // flexDirection: 'row',
+    // alignItems: 'center',
     // marginLeft: 'auto',
     // marginRight: 'auto',
     marginTop: 40,

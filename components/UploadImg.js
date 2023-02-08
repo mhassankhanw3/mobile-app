@@ -10,26 +10,105 @@ import {
   Pressable,
   Layout,
 } from 'react-native';
-import * as ImagePicker from 'react-native-image-picker';
-
-export default function UploadImg({state, setState}) {
+import {Spinner} from '@ui-kitten/components';
+import * as ImagePicker from 'react-native-image-crop-picker';
+export default function UploadImg({
+  imgUrlResponse,
+  setImgUrlResponse,
+  newImgUrlResponse,
+  setNewImgUrlResponse,
+}) {
   const [photo, setPhoto] = useState('');
-  const [newImgUrl, setNewImgUrl] = useState('');
-  let options = {
-    saveToPhotos: true,
-    mediaType: 'photo',
-  };
+  const [newPhoto, setNewPhoto] = useState('');
+  const [loading, setLoading] = useState(false);
+
   const handleChoose = async () => {
-    const result = await ImagePicker.launchImageLibrary(options);
-    setPhoto(result.assets[0].uri);
-    const reference = storage().ref(result.assets[0].fileName);
-    // const pathToFile = `${utils.FilePath.PICTURES_DIRECTORY}/black-t-shirt-sm.png`;
-    await reference.putFile(result.assets[0].uri);
-    const url = await reference.getDownloadURL();
-    setNewImgUrl(url);
-    setState({...state, imgUrl: url});
-    console.log(result);
-    console.log(url);
+    let imageList = [];
+    ImagePicker.openPicker({
+      multiple: true,
+      waitAnimationEnd: true,
+      includeExif: true,
+      forceJpg: true,
+      compressImageQuality: 0.8,
+      maxFiles: 2,
+      mediaType: 'photo',
+      includeBase64: true,
+    }).then(async response => {
+      console.log(response, 'response');
+      response.map(async image => {
+        // imageList.push({
+        //   path: image.path,
+        // });
+        setPhoto(image.path);
+        console.log(image.path, 'image.path');
+        setLoading(true);
+        const reference = storage().ref(image.path);
+        reference.writeToFile(image.path);
+        await reference.putFile(image.path);
+        const url = await reference.getDownloadURL();
+        setImgUrlResponse(url);
+        setTimeout(() => {
+          setImgUrlResponse(url);
+          setLoading(false);
+        }, 1000);
+      });
+    });
+    // ImagePicker.openPicker({
+    //   multiple: true,
+    //   waitAnimationEnd: true,
+    //   includeExif: true,
+    //   forceJpg: true,
+    //   compressImageQuality: 0.8,
+    //   maxFiles: 10,
+    //   mediaType: 'photo',
+    //   includeBase64: true,
+    // })
+    //   .then(response => {
+    //     console.log(response, 'response');
+    //     response.map(image => {
+    //       setPhoto(image.path, image.path);
+    //     });
+    //   })
+    //   .catch(e => {
+    //     console.log('Error', e.message, e);
+    //   });
+
+    //   .then(async res => {
+    //     // setImgUrlResponse(res);
+    //     setPhoto(res.path);
+    //     setLoading(true);
+    //     const reference = storage().ref(res.path);
+    //     const url = await reference.putFile(res.path);
+    //     // const url = await reference.getDownloadURL();
+    //     setImgUrlResponse(url);
+    //     setTimeout(() => {
+    //       setImgUrlResponse(url);
+    //       setLoading(false);
+    //     }, 1000);
+    //     console.log(result);
+    //     console.log(url);
+    //   })
+    //   .catch(err => {
+    //     console.log(err);
+    //   });
+    // ImagePicker.openPicker({
+    //   multiple: true,
+    // }).then(images => {
+    //   console.log(images);
+    // });
+    // const newImgResult = await ImagePicker.launchImageLibrary(options);
+    // setNewPhoto(newImgResult.assets[0].uri);
+    // setLoading(true);
+    // const newImgReference = storage().ref(result.assets[0].fileName);
+    // await newImgReference.putFile(newImgResult.assets[0].uri);
+    // const newImgurl = await newImgReference.getDownloadURL();
+    // setNewImgUrlResponse(newImgurl);
+    // setTimeout(() => {
+    //   setNewImgUrlResponse(newImgurl);
+    //   setLoading(false);
+    // }, 1000);
+    // console.log(newImgResult);
+    // console.log(newImgurl);
   };
 
   return (
@@ -37,23 +116,50 @@ export default function UploadImg({state, setState}) {
       <Text style={styles.filesText}>2 Latest Pictures</Text>
       <View style={styles.dropfiles}>
         <Text style={styles.dragtxt}>Drop Files here or</Text>
-        <Text style={{textAlign: 'center', fontSize: 12, color: '#dc2626'}}>
+        {/* <Text style={{textAlign: 'center', fontSize: 12, color: '#dc2626'}}>
           {newImgUrl}
-        </Text>
-        {photo ? (
-          <Image
+        </Text> */}
+        {/* {newImgUrl
+          ?  */}
+        {loading ? (
+          <View
             style={{
-              width: 200,
-              height: 200,
               marginLeft: 'auto',
               marginRight: 'auto',
               marginTop: 10,
-            }}
-            source={{uri: photo}}
-          />
+              marginBottom: 10,
+            }}>
+            <Spinner size="small" status="warning" />
+          </View>
         ) : (
-          ''
+          imgUrlResponse &&
+          photo && (
+            <View
+              key={photo.toString()}
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                width: '100%',
+              }}>
+              <Image
+                style={{
+                  width: 200,
+                  height: 200,
+                  marginLeft: 'auto',
+                  marginRight: 'auto',
+                  marginTop: 10,
+                }}
+                source={{uri: photo}}
+              />
+            </View>
+          )
         )}
+
+        {/* <Pressable style={styles.button} onPress={handleChoose}>
+          <Text style={styles.text}>Select Files</Text>
+        </Pressable> */}
         <Pressable style={styles.button} onPress={handleChoose}>
           <Text style={styles.text}>Select Files</Text>
         </Pressable>
