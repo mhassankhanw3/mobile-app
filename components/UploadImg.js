@@ -26,31 +26,31 @@ export default function UploadImg({
     let imageList = [];
     ImagePicker.openPicker({
       multiple: true,
-      waitAnimationEnd: true,
-      includeExif: true,
+      // waitAnimationEnd: true,
+      // includeExif: true,
       forceJpg: true,
-      compressImageQuality: 0.8,
+      // compressImageQuality: 0.8,
       maxFiles: 2,
       mediaType: 'photo',
-      includeBase64: true,
+      // includeBase64: true,
     }).then(async response => {
       console.log(response, 'response');
+      setPhoto(response);
       response.map(async image => {
-        // imageList.push({
-        //   path: image.path,
-        // });
-        setPhoto(image.path);
+        imageList.push({
+          path: image.path,
+        });
         console.log(image.path, 'image.path');
         setLoading(true);
         const reference = storage().ref(image.path);
-        reference.writeToFile(image.path);
         await reference.putFile(image.path);
         const url = await reference.getDownloadURL();
         setImgUrlResponse(url);
-        setTimeout(() => {
-          setImgUrlResponse(url);
-          setLoading(false);
-        }, 1000);
+        // setTimeout(() => {
+        //   setImgUrlResponse(url);
+        console.log(url);
+        setLoading(false);
+        // }, 1000);
       });
     });
     // ImagePicker.openPicker({
@@ -133,14 +133,17 @@ export default function UploadImg({
           </View>
         ) : (
           imgUrlResponse &&
-          photo && (
+          photo &&
+          photo?.map((item, index) => (
             <View
-              key={photo.toString()}
+              key={index}
               style={{
                 display: 'flex',
-                flexDirection: 'row',
+                flexDirection: 'column',
                 alignItems: 'center',
-                justifyContent: 'space-between',
+                marginTop: 20,
+                marginBottom: 5,
+                // justifyContent: 'space-between',
                 width: '100%',
               }}>
               <Image
@@ -151,10 +154,10 @@ export default function UploadImg({
                   marginRight: 'auto',
                   marginTop: 10,
                 }}
-                source={{uri: photo}}
+                source={{uri: item?.path}}
               />
             </View>
-          )
+          ))
         )}
 
         {/* <Pressable style={styles.button} onPress={handleChoose}>

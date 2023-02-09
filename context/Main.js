@@ -2,7 +2,15 @@ import React, {useState, createContext, useContext, useEffect} from 'react';
 // import firebase from '../firebase/config';
 import auth from '@react-native-firebase/auth';
 import firebase from '@react-native-firebase/app';
-
+import {
+  StyleSheet,
+  View,
+  Text,
+  ScrollView,
+  Pressable,
+  Alert,
+  Image,
+} from 'react-native';
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -19,6 +27,7 @@ export default MainContextProvider = props => {
   const [email, setEmail] = useState('');
   const [logout, setLogout] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [pageLoading, setPageLoading] = useState(false);
   const [visible, setVisible] = React.useState(false);
   const [message, setMessage] = useState(false);
   const [error, setError] = useState(false);
@@ -91,82 +100,108 @@ export default MainContextProvider = props => {
   }, []);
   const Form = async (
     state,
+    setState,
     fileUrlResponse,
+    setFileUrlResponse,
     documentUrlResponse,
+    setDocumentUrlResponse,
     imgUrlResponse,
-    newImgUrlResponse,
+    setImgUrlResponse,
+    // newImgUrlResponse,
   ) => {
-    await firestore()
-      .collection('Registration')
-      .doc(user.uid)
-      .set({
-        name: state.name,
-        selectedIndex: state.selectedIndex,
-        date: state.date,
-        age: state.age,
-        defaultSingle: state.defaultSingle,
-        noOfChildren: state.noOfChildren,
-        ageOfChildren: state.ageOfChildren,
-        livingWith: state.livingWith,
-        height: state.height,
-        complexion: state.complexion,
-        cast: state.cast,
-        sect: state.sect,
-        nationality: state.nationality,
-        education: state.education,
-        institute: state.institute,
-        companyName: state.companyName,
-        salary: state.salary,
-        fatherName: state.fatherName,
-        fatherOrigin: state.fatherOrigin,
-        fatherOccupations: state.fatherOccupations,
-        motherName: state.motherName,
-        motherOrigin: state.motherOrigin,
-        motherOccupation: state.motherOccupation,
-        noOfBrothers: state.noOfBrothers,
-        noOfMarriedBrothers: state.noOfMarriedBrothers,
-        noOfSisters: state.noOfSisters,
-        noOfMarriedSisters: state.noOfMarriedSisters,
-        familyStatus: state.familyStatus,
-        streetaddress: state.streetaddress,
-        addressLineTwo: state.addressLineTwo,
-        city: state.city,
-        region: state.region,
-        postalCode: state.postalCode,
-        selectedCountry: state.selectedCountry,
-        selectedHouse: state.selectedHouse,
-        selectedRent: state.selectedRent,
-        yards: state.yards,
-        phoneNumber: state.phoneNumber,
-        mobileNumber: state.mobileNumber,
-        email: state.email,
-        nationality: state.nationality,
-        familyStatus: state.familyStatus,
-        requirAge: state.requirAge,
-        requirHeight: state.requirHeight,
-        requirStatus: state.requirStatus,
-        requirChild: state.requirChild,
-        requirComplexion: state.requirComplexion,
-        requirEducation: state.requirEducation,
-        requireCast: state.requireCast,
-        requirSect: state.requirSect,
-        requirArea: state.requirArea,
-        requirFamilyStatus: state.requirFamilyStatus,
-        requirAnyOtherRequir: state.requirAnyOtherRequir,
-        requrHearAbout: state.requrHearAbout,
-        imgUrlResponse: imgUrlResponse,
-        newImgUrlResponse: newImgUrlResponse,
-        fileUrlResponse: fileUrlResponse,
-        documentUrlResponse: documentUrlResponse,
-      })
-      .then(() => {
-        console.log('User added!');
-        // setLoading(true);
-      })
-      .catch(error => {
-        // setLoading(false);
-        console.log(error, 'error');
-      });
+    if (imgUrlResponse && fileUrlResponse && documentUrlResponse) {
+      await firestore()
+        .collection('Registration')
+        .doc(user.uid)
+        .set({
+          name: state.name,
+          selectedIndex: state.selectedIndex,
+          date: state.date,
+          age: state.age,
+          defaultSingle: state.defaultSingle,
+          noOfChildren: state.noOfChildren,
+          ageOfChildren: state.ageOfChildren,
+          livingWith: state.livingWith,
+          height: state.height,
+          complexion: state.complexion,
+          cast: state.cast,
+          sect: state.sect,
+          nationality: state.nationality,
+          education: state.education,
+          institute: state.institute,
+          companyName: state.companyName,
+          salary: state.salary,
+          fatherName: state.fatherName,
+          fatherOrigin: state.fatherOrigin,
+          fatherOccupations: state.fatherOccupations,
+          motherName: state.motherName,
+          motherOrigin: state.motherOrigin,
+          motherOccupation: state.motherOccupation,
+          noOfBrothers: state.noOfBrothers,
+          noOfMarriedBrothers: state.noOfMarriedBrothers,
+          noOfSisters: state.noOfSisters,
+          noOfMarriedSisters: state.noOfMarriedSisters,
+          familyStatus: state.familyStatus,
+          streetaddress: state.streetaddress,
+          addressLineTwo: state.addressLineTwo,
+          city: state.city,
+          region: state.region,
+          postalCode: state.postalCode,
+          selectedCountry: state.selectedCountry,
+          selectedHouse: state.selectedHouse,
+          selectedRent: state.selectedRent,
+          yards: state.yards,
+          phoneNumber: state.phoneNumber,
+          mobileNumber: state.mobileNumber,
+          email: state.email,
+          nationality: state.nationality,
+          familyStatus: state.familyStatus,
+          requirAge: state.requirAge,
+          requirHeight: state.requirHeight,
+          requirStatus: state.requirStatus,
+          requirChild: state.requirChild,
+          requirComplexion: state.requirComplexion,
+          requirEducation: state.requirEducation,
+          requireCast: state.requireCast,
+          requirSect: state.requirSect,
+          requirArea: state.requirArea,
+          requirFamilyStatus: state.requirFamilyStatus,
+          requirAnyOtherRequir: state.requirAnyOtherRequir,
+          requrHearAbout: state.requrHearAbout,
+          imgUrlResponse: imgUrlResponse,
+          // newImgUrlResponse: newImgUrlResponse,
+          fileUrlResponse: fileUrlResponse,
+          documentUrlResponse: documentUrlResponse,
+        })
+        .then(res => {
+          // state;
+          // imgUrlResponse;
+          // fileUrlResponse;
+          // documentUrlResponse;
+          Alert.alert('Submit', 'Your Form has been submitted', [
+            {text: 'OK', onPress: () => console.log('OK Pressed')},
+          ]);
+          console.log('User added!');
+          setState('');
+          setImgUrlResponse('');
+          setFileUrlResponse('');
+          setDocumentUrlResponse('');
+          // setLoading(true);
+        })
+        .catch(error => {
+          Alert.alert('Error', 'Please fill the required Fields', [
+            {
+              text: 'Cancel',
+              onPress: () => console.log('Cancel Pressed'),
+              style: 'cancel',
+            },
+            {text: 'OK', onPress: () => console.log('OK Pressed')},
+          ]);
+          console.log(error, 'error');
+        });
+    } else {
+      console.log(error, 'error');
+    }
   };
 
   const Logout = async (email, password, navigation) => {
@@ -252,6 +287,8 @@ export default MainContextProvider = props => {
         success: success,
         setSuccess: setSuccess,
         loading: loading,
+        pageLoading: pageLoading,
+        setPageLoading: setPageLoading,
         setLoading: setLoading,
         logout: logout,
         setLogout: setLogout,

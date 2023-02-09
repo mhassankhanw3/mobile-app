@@ -4,10 +4,11 @@ import {useMainContext} from '../context/Main';
 import {useNavigation} from '@react-navigation/native';
 
 export default function ScreenNavigator({children}) {
-  const {user} = useMainContext();
+  const {user, pageLoading, setPageLoading} = useMainContext();
   const navigation = useNavigation();
   useEffect(() => {
     if (!user) {
+      setPageLoading(true);
       navigation?.navigate('Login');
     } else {
       navigation?.navigate('Registeration');
