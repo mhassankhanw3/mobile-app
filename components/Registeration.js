@@ -113,6 +113,8 @@ export default function Registeration() {
     func,
     pageLoading,
     setPageLoading,
+    signUpLoading,
+    setSignUpLoading,
     loading,
     setLoading,
     message,
@@ -133,30 +135,6 @@ export default function Registeration() {
         setImgUrlResponse,
         // newImgUrlResponse,
       );
-      // if (
-      //   (func.Form =
-      //     imgUrlResponse ||
-      //     func.Form == newImgUrlResponse ||
-      //     func.Form === documentUrlResponse ||
-      //     func.Form === fileUrlResponse)
-      // ) {
-      //   console.log('Successfull');
-      //   setMessage(false);
-      //   Alert.alert('Submit', 'Your Form has been submitted', [
-      //     {text: 'OK', onPress: () => console.log('OK Pressed')},
-      //   ]);
-      // } else {
-      //   console.log('Error');
-      // Alert.alert('Error', 'Please fill the required Fields', [
-      //   {
-      //     text: 'Cancel',
-      //     onPress: () => console.log('Cancel Pressed'),
-      //     style: 'cancel',
-      //   },
-      //   {text: 'OK', onPress: () => console.log('OK Pressed')},
-      // ]);
-      //   setMessage(true);
-      // }
     }, 4000);
 
     // setLoading(false);

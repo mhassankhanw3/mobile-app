@@ -27,6 +27,7 @@ export default MainContextProvider = props => {
   const [email, setEmail] = useState('');
   const [logout, setLogout] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [signUpLoading, setSignUpLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(false);
   const [visible, setVisible] = React.useState(false);
   const [message, setMessage] = useState(false);
@@ -37,18 +38,33 @@ export default MainContextProvider = props => {
     await auth()
       .createUserWithEmailAndPassword(email, password)
       .then(res => {
+        // setLoading(true);
         console.log('User account created & signed in!');
-        navigation.navigate('Login');
         console.log(res, 'res');
+
+        // setLoading(false);
         // return true;
       })
       .catch(error => {
+        setLoading(false);
         if (error.code === 'auth/email-already-in-use') {
           console.log('That email address is already in use!');
+          Alert.alert(
+            'Error',
+            'That email address is already in use!',
+
+            [{text: 'OK', onPress: () => console.log('OK Pressed')}],
+          );
         }
 
         if (error.code === 'auth/invalid-email') {
           console.log('That email address is invalid!');
+          Alert.alert(
+            'Error',
+            'That email address is invalid!',
+
+            [{text: 'OK', onPress: () => console.log('OK Pressed')}],
+          );
         }
         navigation.navigate('Signup');
 
@@ -61,15 +77,32 @@ export default MainContextProvider = props => {
       .signInWithEmailAndPassword(email, password)
       .then(() => {
         console.log('User account created & signed in!');
-        navigation.navigate('Registeration');
+        // Alert.alert(
+        //   'Congratulations',
+        //   'User account created & signed in!',
+
+        //   [{text: 'OK', onPress: () => console.log('OK Pressed')}],
+        // );
+        navigation?.navigate('Registeration');
       })
       .catch(error => {
+        Alert.alert(
+          'Something went wrong!',
+          'Please check your email and password',
+          [{text: 'OK', onPress: () => console.log('OK Pressed')}],
+        );
         if (error.code === 'auth/email-already-in-use') {
           console.log('That email address is already in use!');
+          Alert.alert('Error', 'That email address is already in use!', [
+            {text: 'OK', onPress: () => console.log('OK Pressed')},
+          ]);
         }
 
         if (error.code === 'auth/invalid-email') {
           console.log('That email address is invalid!');
+          Alert.alert('Error', 'That email address is invalid!', [
+            {text: 'OK', onPress: () => console.log('OK Pressed')},
+          ]);
         }
         navigation.navigate('Login');
         console.error(error);
@@ -298,6 +331,8 @@ export default MainContextProvider = props => {
         setMessage: setMessage,
         visible: visible,
         setVisible: setVisible,
+        signUpLoading: signUpLoading,
+        setSignUpLoading: setSignUpLoading,
         func: {
           newUser,
           signIn,

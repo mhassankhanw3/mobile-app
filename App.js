@@ -11,7 +11,7 @@ import {useMainContext} from './context/Main';
 import {EvaIconsPack} from '@ui-kitten/eva-icons';
 import {Signup} from './components/Signup';
 import {Login} from './components/Login';
-import {StyleSheet, View, Pressable} from 'react-native';
+import {StyleSheet, View, Pressable, Alert} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import AuthContext from './context/Main';
