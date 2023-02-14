@@ -12,10 +12,10 @@ export const Signup = ({navigation}) => {
   const submitHandle = () => {
     if (func.newUser(email, password, navigation)) {
       setLoading(true);
-      setTimeout(() => {
-        setLoading(false);
-        navigation?.navigate('Registeration');
-      }, 6000);
+      // setTimeout(() => {
+      setLoading(false);
+      navigation?.navigate('Registeration');
+      // }, 6000);
     }
   };
   const goLoginPage = () => {
