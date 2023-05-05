@@ -1,5 +1,6 @@
 import React, {useState, createContext, useContext, useEffect} from 'react';
 // import firebase from '../firebase/config';
+import emailjs, {send} from 'emailjs-com';
 import auth from '@react-native-firebase/auth';
 import firebase from '@react-native-firebase/app';
 import {
@@ -121,15 +122,15 @@ export default MainContextProvider = props => {
     // enable persistence by adding the below flag
     persistence: true,
   };
+
   // useEffect(async () => {
   //   await firebase.initializeApp(config);
   // }, []);
   useEffect(() => {
-    // You can await here
     if (firebase.apps.length === 0) {
       firebase.initializeApp(config);
+      const storage = firebase.storage();
     }
-    // ...
   }, []);
   const Form = async (
     state,
@@ -142,7 +143,7 @@ export default MainContextProvider = props => {
     setImgUrlResponse,
     // newImgUrlResponse,
   ) => {
-    if (imgUrlResponse && fileUrlResponse && documentUrlResponse) {
+    if (email && phoneNumber && imgUrlResponse && fileUrlResponse && documentUrlResponse) {
       await firestore()
         .collection('Registration')
         .doc(user.uid)
@@ -159,7 +160,6 @@ export default MainContextProvider = props => {
           complexion: state.complexion,
           cast: state.cast,
           sect: state.sect,
-          nationality: state.nationality,
           education: state.education,
           institute: state.institute,
           companyName: state.companyName,
@@ -188,7 +188,6 @@ export default MainContextProvider = props => {
           mobileNumber: state.mobileNumber,
           email: state.email,
           nationality: state.nationality,
-          familyStatus: state.familyStatus,
           requirAge: state.requirAge,
           requirHeight: state.requirHeight,
           requirStatus: state.requirStatus,
@@ -202,7 +201,6 @@ export default MainContextProvider = props => {
           requirAnyOtherRequir: state.requirAnyOtherRequir,
           requrHearAbout: state.requrHearAbout,
           imgUrlResponse: imgUrlResponse,
-          // newImgUrlResponse: newImgUrlResponse,
           fileUrlResponse: fileUrlResponse,
           documentUrlResponse: documentUrlResponse,
         })
@@ -219,6 +217,7 @@ export default MainContextProvider = props => {
           setImgUrlResponse('');
           setFileUrlResponse('');
           setDocumentUrlResponse('');
+          // sendEmail();
           // setLoading(true);
         })
         .catch(error => {
@@ -251,6 +250,22 @@ export default MainContextProvider = props => {
       });
   };
 
+  // function sendEmail() {
+  //   const templateParams = {
+  //     name: 'Taha',
+  //     notes: 'Check this out!',
+  //   };
+
+  //   emailjs.send('service_3hxhuca', 'template_5aqs914', templateParams).then(
+  //     function (response) {
+  //       console.log('SUCCESS!', response.status, response.text);
+  //     },
+  //     function (error) {
+  //       console.log('FAILED...', error);
+  //     },
+  //   );
+  // }
+
   function onAuthStateChanged(user) {
     setUser(user);
     if (initializing) setInitializing(false);
@@ -265,38 +280,6 @@ export default MainContextProvider = props => {
     console.log(user);
   }, [user]);
 
-  // unsubscribe on unmount
-
-  // const signIn = async (email, password) => {
-  //   await firebase
-  //     .auth()
-  //     .signInWithEmailAndPassword(email, password)
-  //     .then((userCredential) => {
-  //       // Signed in
-  //       console.log(userCredential, "users");
-  //       const user = userCredential.user;
-  //       setLoading(true);
-
-  //       setError(false);
-  //       setSuccess(true);
-  //       router.push("/login/Dashboard");
-  //       // setLoading(false);
-  //       // ...
-  //     })
-  //     .catch((error) => {
-  //       const errorMessage = error.message;
-  //       setError(errorMessage);
-  //       setSuccess(false);
-  //       setLoading(false);
-  //       router.push("/login");
-  //       // console.log(error.message, "error");
-  //       const errorCode = error.code;
-  //       console.log(errorCode, "errorCode");
-
-  //       console.log(errorMessage, "errorMessage");
-  //       // ..
-  //     });
-  // };
   // const logOut = async (email, password) => {
   //   const auth = getAuth();
   //   signOut(auth)
@@ -338,6 +321,7 @@ export default MainContextProvider = props => {
           signIn,
           Form,
           Logout,
+          // sendEmail,
         },
       }}>
       {children}

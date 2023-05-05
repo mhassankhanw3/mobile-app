@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View, Image} from 'react-native';
 import {Input, Layout, Button, Modal, Spinner} from '@ui-kitten/components';
 import {useMainContext} from '../context/Main';
 
@@ -30,10 +30,30 @@ export const Signup = ({navigation}) => {
           backgroundColor: 'white',
           height: '100%',
         }}>
+        <View
+          style={{
+            width: '100%',
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            marginBottom: 10,
+          }}>
+          <Image
+            style={{
+              width: 170,
+              height: 130,
+              marginLeft: 'auto',
+              marginRight: 'auto',
+              // marginTop: 10,
+            }}
+            source={{
+              uri: 'https://d21b0h47110qhi.cloudfront.net/image/logo-copy-0jik8m8VSXvJcvH.png',
+            }}
+          />
+        </View>
         <View>
           <Text style={styles.head}>Sign Up</Text>
         </View>
-        <View style={{padding: 20}}>
+        <View style={{paddingLeft: 20, paddingRight: 20}}>
           <View>
             <Input
               style={styles.input}
@@ -53,16 +73,22 @@ export const Signup = ({navigation}) => {
           </View>
           <View
             style={{
-              width: '100%',
               marginTop: 10,
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-              //   justifyContent: 'center',
+              textAlign: 'center',
+              width: '100%',
+              marginLeft: 'auto',
+              marginRight: 'auto',
             }}>
-            <Text>Already have an account?</Text>
-            <Text style={styles.logintxtlink} onPress={goLoginPage}>
-              login
+            <Text style={{textAlign: 'center'}}>Already have an account?</Text>
+            <Text
+              style={{
+                textAlign: 'center',
+                textDecorationLine: 'underline',
+                color: '#2563eb',
+                fontSize: 16,
+              }}
+              onPress={goLoginPage}>
+              Login
             </Text>
           </View>
         </View>
@@ -108,7 +134,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     width: '100%',
     margin: 'auto',
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: 'bold',
   },
   logintxt: {

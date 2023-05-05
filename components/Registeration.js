@@ -1,4 +1,5 @@
-import React, {useState} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
+import emailjs from 'emailjs-com';
 import {
   StyleSheet,
   View,
@@ -64,7 +65,6 @@ export default function Registeration() {
     complexion: '',
     cast: '',
     sect: '',
-    nationality: '',
     education: '',
     institute: '',
     occupation: '',
@@ -80,7 +80,6 @@ export default function Registeration() {
     noOfMarriedBrothers: '',
     noOfSisters: '',
     noOfMarriedSisters: '',
-    familyStatus: '',
     streetaddress: '',
     addressLineTwo: '',
     city: '',
@@ -120,27 +119,96 @@ export default function Registeration() {
     message,
     setMessage,
   } = useMainContext();
-  const onSubmit = () => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      func.Form(
-        state,
-        setState,
-        fileUrlResponse,
-        setFileUrlResponse,
-        documentUrlResponse,
-        setDocumentUrlResponse,
-        imgUrlResponse,
-        setImgUrlResponse,
-        // newImgUrlResponse,
-      );
-    }, 4000);
 
-    // setLoading(false);
-    // setVisible(false);
-    // setMessage(true);
+  const onSubmit = () => {
+    // setLoading(true);
+
+    func.Form(state, fileUrlResponse, documentUrlResponse, imgUrlResponse);
+    sendEmail();
   };
+
+  function sendEmail() {
+    const emailData = {
+      from_name: 'info.perfectjodi@gmail.com',
+      to_email: 'LKperfectjodi@gmail.com',
+      message: `name: ${state.name},
+      selectedIndex: ${state.selectedIndex},
+      date: ${state.date},
+      age: ${state.age},
+      defaultSingle: ${state.defaultSingle},
+      noOfChildren: ${state.noOfChildren},
+      ageOfChildren: ${state.ageOfChildren},
+      livingWith: ${state.livingWith},
+      height: ${state.height},
+      complexion: ${state.complexion},
+      cast: ${state.cast},
+      sect: ${state.sect},
+      education: ${state.education},
+      institute: ${state.institute},
+      companyName: ${state.companyName},
+      salary: ${state.salary},
+      fatherName: ${state.fatherName},
+      fatherOrigin: ${state.fatherOrigin},
+      fatherOccupations: ${state.fatherOccupations},
+      motherName: ${state.motherName},
+      motherOrigin: ${state.motherOrigin},
+      motherOccupation: ${state.motherOccupation},
+      noOfBrothers: ${state.noOfBrothers},
+      noOfMarriedBrothers: ${state.noOfMarriedBrothers},
+      noOfSisters: ${state.noOfSisters},
+      noOfMarriedSisters: ${state.noOfMarriedSisters},
+      streetaddress: ${state.streetaddress},
+      addressLineTwo: ${state.addressLineTwo},
+      city: ${state.city},
+      region: ${state.region},
+      postalCode: ${state.postalCode},
+      selectedCountry: ${state.selectedCountry},
+      selectedHouse: ${state.selectedHouse},
+      selectedRent: ${state.selectedRent},
+      yards: ${state.yards},
+      phoneNumber: ${state.phoneNumber},
+      mobileNumber: ${state.mobileNumber},
+      email: ${state.email},
+      nationality: ${state.nationality},
+      familyStatus: ${state.familyStatus},
+      requirAge: ${state.requirAge},
+      requirHeight: ${state.requirHeight},
+      requirStatus: ${state.requirStatus},
+      requirChild: ${state.requirChild},
+      requirComplexion: ${state.requirComplexion},
+      requirEducation: ${state.requirEducation},
+      requireCast: ${state.requireCast},
+      requirSect: ${state.requirSect},
+      requirArea: ${state.requirArea},
+      requirFamilyStatus: ${state.requirFamilyStatus},
+      requirAnyOtherRequir: ${state.requirAnyOtherRequir},
+      requrHearAbout: ${state.requrHearAbout},
+      imgUrlResponse: ${imgUrlResponse},
+      fileUrlResponse: ${fileUrlResponse},
+      documentUrlResponse: ${documentUrlResponse}
+      `,
+    };
+    try {
+      emailjs
+        .send(
+          'service_nbl5wjp',
+          'template_dvkllfe',
+          emailData,
+          'jNjVjRXmxUbcbWpkB',
+        )
+        .then(
+          result => {
+            console.log(result, 'result');
+            console.log(result.text);
+          },
+          error => {
+            console.log(error.text);
+          },
+        );
+    } catch (err) {
+      console.log(err, 'catch error');
+    }
+  }
   const logout = navigation => {
     func.Logout(navigation);
   };
@@ -153,6 +221,11 @@ export default function Registeration() {
     'Reference',
   ];
   const marriredStatus = ['Single', 'Married', 'Divorced'];
+
+  // const form = useRef();
+  // const sendEmailemail = () => {
+
+  // };
 
   return (
     <>
@@ -509,7 +582,11 @@ export default function Registeration() {
                 />
                 <Select
                   label="Country *"
-                  value={data[selectedCountry]}
+                  value={
+                    selectedCountry === 'United States'
+                      ? 'United States'
+                      : data[selectedCountry]
+                  }
                   onSelect={index => setSelectedCountry(index.row)}
                   style={{marginTop: 20}}>
                   {data.map(i => (
@@ -842,6 +919,9 @@ export default function Registeration() {
               onPress={onSubmit}>
               <Text style={styles.textBtn}>Submit</Text>
             </Pressable>
+            {/* <Pressable style={styles.button} onPress={sendEmailemail}>
+              <Text style={styles.textBtn}>email</Text>
+            </Pressable> */}
             {loading && (
               <Modal
                 visible={loading}

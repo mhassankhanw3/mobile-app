@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View, Text} from 'react-native';
+import {StyleSheet, View, Text, Image} from 'react-native';
 import {Input, Layout, Button} from '@ui-kitten/components';
 import {useMainContext} from '../context/Main';
 import ScreenNavigator from './ScreenNavigator';
@@ -18,10 +18,30 @@ export const Login = ({navigation}) => {
   return (
     <ScreenNavigator>
       <Layout style={styles.container}>
+        <View
+          style={{
+            width: '100%',
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            marginBottom: 10,
+          }}>
+          <Image
+            style={{
+              width: 170,
+              height: 130,
+              marginLeft: 'auto',
+              marginRight: 'auto',
+              // marginTop: 10,
+            }}
+            source={{
+              uri: 'https://d21b0h47110qhi.cloudfront.net/image/logo-copy-0jik8m8VSXvJcvH.png',
+            }}
+          />
+        </View>
         <View>
           <Text style={styles.head}>Login</Text>
         </View>
-        <View style={{padding: 20}}>
+        <View style={{paddingLeft: 20, paddingRight: 20}}>
           <View>
             <Input
               style={styles.input}
@@ -79,7 +99,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     width: '100%',
     margin: 'auto',
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: 'bold',
   },
   input: {
