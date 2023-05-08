@@ -134,16 +134,16 @@ export default MainContextProvider = props => {
   }, []);
   const Form = async (
     state,
-    setState,
     fileUrlResponse,
-    setFileUrlResponse,
     documentUrlResponse,
-    setDocumentUrlResponse,
     imgUrlResponse,
+    setState,
+    setFileUrlResponse,
+    setDocumentUrlResponse,
     setImgUrlResponse,
     // newImgUrlResponse,
   ) => {
-    if (email && phoneNumber && imgUrlResponse && fileUrlResponse && documentUrlResponse) {
+    if (imgUrlResponse && fileUrlResponse && documentUrlResponse) {
       await firestore()
         .collection('Registration')
         .doc(user.uid)

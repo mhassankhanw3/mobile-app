@@ -8,7 +8,10 @@ import {
   Pressable,
   Alert,
   Image,
+  TouchableHighlight,
+  Linking,
 } from 'react-native';
+import IconLink from 'react-native-vector-icons/FontAwesome';
 import {
   Layout,
   Select,
@@ -36,28 +39,19 @@ import UploadDocument from './UploadDocument';
 const imageUrl =
   'https://upload.wikimedia.org/wikipedia/commons/3/36/Hopetoun_falls.jpg';
 export default function Registeration() {
-  const [selectedIndex, setSelectedIndex] = React.useState('Gender');
-  const [defaultSingle, setDefaultSingle] = React.useState('Single');
-  const [requirGender, setRequirGender] = React.useState('Gender');
-  const [value, setValue] = React.useState('');
-  const [selectedCountry, setSelectedCountry] = useState('Pakistan');
-  const [selectedHouse, setSelectedHouse] = useState('Select');
-  const [selectedRent, setSelectedRent] = useState('Select');
-  const [requrHearAbout, setRequrHearAbout] = useState('Newspaper Ad');
   const [fileUrlResponse, setFileUrlResponse] = useState('');
   const [documentUrlResponse, setDocumentUrlResponse] = useState('');
   const [imgUrlResponse, setImgUrlResponse] = useState('');
   const [newImgUrlResponse, setNewImgUrlResponse] = useState('');
   const [isNotDisabled, setIsNotDisabled] = useState(true);
+  const [isPress, setIsPress] = React.useState(false);
 
-  // const [requrHearAbout, setRequrHearAbout] = useState('Newspaper Ad');
-  // const [date, setDate] = React.useState(new Date());
   const [state, setState] = useState({
     name: '',
     selectedIndex: '',
     date: new Date(),
     age: '',
-    defaultSingle: '',
+    defaultSingle: 'Single',
     noOfChildren: '',
     ageOfChildren: '',
     livingWith: '',
@@ -92,6 +86,7 @@ export default function Registeration() {
     phoneNumber: '',
     mobileNumber: '',
     email: '',
+    requirGender: '',
     nationality: '',
     familyStatus: '',
     requirAge: '',
@@ -108,23 +103,23 @@ export default function Registeration() {
     requrHearAbout: '',
   });
 
-  const {
-    func,
-    pageLoading,
-    setPageLoading,
-    signUpLoading,
-    setSignUpLoading,
-    loading,
-    setLoading,
-    message,
-    setMessage,
-  } = useMainContext();
+  const {func, loading, setLoading} = useMainContext();
 
-  const onSubmit = () => {
-    // setLoading(true);
+  const onSubmit = async () => {
+    setLoading(true);
 
-    func.Form(state, fileUrlResponse, documentUrlResponse, imgUrlResponse);
+    await func.Form(
+      state,
+      fileUrlResponse,
+      documentUrlResponse,
+      imgUrlResponse,
+      setState,
+      setFileUrlResponse,
+      setDocumentUrlResponse,
+      setImgUrlResponse,
+    );
     sendEmail();
+    setLoading(false);
   };
 
   function sendEmail() {
@@ -145,6 +140,7 @@ export default function Registeration() {
       sect: ${state.sect},
       education: ${state.education},
       institute: ${state.institute},
+      occupation: ${state.occupation}
       companyName: ${state.companyName},
       salary: ${state.salary},
       fatherName: ${state.fatherName},
@@ -164,11 +160,12 @@ export default function Registeration() {
       postalCode: ${state.postalCode},
       selectedCountry: ${state.selectedCountry},
       selectedHouse: ${state.selectedHouse},
-      selectedRent: ${state.selectedRent},
       yards: ${state.yards},
+      selectedRent: ${state.selectedRent},
       phoneNumber: ${state.phoneNumber},
       mobileNumber: ${state.mobileNumber},
       email: ${state.email},
+      requirGender: ${state.requirGender},
       nationality: ${state.nationality},
       familyStatus: ${state.familyStatus},
       requirAge: ${state.requirAge},
@@ -221,11 +218,26 @@ export default function Registeration() {
     'Reference',
   ];
   const marriredStatus = ['Single', 'Married', 'Divorced'];
+  const genderStatus = ['Male', 'Female'];
+  const homeStatus = ['House', 'Flat'];
+  const RentStatus = ['Rent', 'Own'];
+  const requireGenderStatus = ['Male', 'Female'];
 
-  // const form = useRef();
-  // const sendEmailemail = () => {
+  const handleLinkPress = () => {
+    Linking.openURL('https://www.facebook.com/perfectjodi/');
+  };
+  const InstahandleLinkPress = () => {
+    Linking.openURL('https://www.instagram.com/perfectjodi/');
+  };
 
-  // };
+  let touchProps = {
+    activeOpacity: 1,
+    underlayColor: '#f3f4f6', // <-- "backgroundColor" will be always overwritten by "underlayColor"
+    style: isPress ? styles.buttonHover : styles.button, // <-- but you can still apply other style changes
+    onHideUnderlay: () => setIsPress(false),
+    onShowUnderlay: () => setIsPress(true),
+    onPress: () => console.log('HELLO'), // <-- "onPress" is apparently required
+  };
 
   return (
     <>
@@ -277,17 +289,18 @@ export default function Registeration() {
             <View>
               <Select
                 label="Gender *"
-                value={
-                  selectedIndex === 'Gender'
-                    ? 'Gender'
-                    : selectedIndex === 0
-                    ? 'Male'
-                    : 'Female'
+                placeholder="Gender"
+                value={state.selectedIndex}
+                onSelect={index =>
+                  setState({
+                    ...state,
+                    selectedIndex: genderStatus[index.row],
+                  })
                 }
-                onSelect={index => setSelectedIndex(index.row)}
                 style={{marginTop: 20}}>
-                <SelectItem title="Male" />
-                <SelectItem title="Female" />
+                {genderStatus.map(i => (
+                  <SelectItem key={i} title={i} />
+                ))}
               </Select>
               <Input
                 label="Name"
@@ -319,8 +332,10 @@ export default function Registeration() {
               <Select
                 label="Marital Status *"
                 placeholder="Single"
-                value={marriredStatus[defaultSingle]}
-                onSelect={index => setDefaultSingle(index.row)}
+                value={state.defaultSingle}
+                onSelect={index =>
+                  setState({...state, defaultSingle: marriredStatus[index.row]})
+                }
                 style={{marginTop: 20}}>
                 {marriredStatus.map(i => (
                   <SelectItem key={i} title={i} />
@@ -582,12 +597,11 @@ export default function Registeration() {
                 />
                 <Select
                   label="Country *"
-                  value={
-                    selectedCountry === 'United States'
-                      ? 'United States'
-                      : data[selectedCountry]
+                  placeholder="choose your Country"
+                  value={state.selectedCountry}
+                  onSelect={index =>
+                    setState({...state, selectedCountry: data[index.row]})
                   }
-                  onSelect={index => setSelectedCountry(index.row)}
                   style={{marginTop: 20}}>
                   {data.map(i => (
                     <SelectItem key={i} title={i} />
@@ -595,17 +609,18 @@ export default function Registeration() {
                 </Select>
                 <Select
                   label="Flat or House *"
-                  value={
-                    selectedHouse === 'Select'
-                      ? 'Select'
-                      : selectedHouse === 0
-                      ? 'Flat'
-                      : 'House'
+                  placeholder="Flat or House"
+                  value={state.selectedHouse}
+                  onSelect={index =>
+                    setState({
+                      ...state,
+                      selectedHouse: homeStatus[index.row],
+                    })
                   }
-                  onSelect={index => setSelectedHouse(index.row)}
                   style={{marginTop: 20}}>
-                  <SelectItem title="Flat" />
-                  <SelectItem title="House" />
+                  {homeStatus.map(i => (
+                    <SelectItem key={i} title={i} />
+                  ))}
                 </Select>
                 <Input
                   label="Yards"
@@ -617,17 +632,15 @@ export default function Registeration() {
                 />
                 <Select
                   label="Rent or Own *"
-                  value={
-                    selectedRent === 'Select'
-                      ? 'Select'
-                      : selectedRent === 0
-                      ? 'Rent'
-                      : 'Own'
+                  placeholder="Rent or Own"
+                  value={state.selectedRent}
+                  onSelect={index =>
+                    setState({...state, selectedRent: RentStatus[index.row]})
                   }
-                  onSelect={index => setSelectedRent(index.row)}
                   style={{marginTop: 20}}>
-                  <SelectItem title="Rent" />
-                  <SelectItem title="own" />
+                  {RentStatus.map(i => (
+                    <SelectItem key={i} title={i} />
+                  ))}
                 </Select>
                 <Input
                   label="Phone Number"
@@ -663,17 +676,18 @@ export default function Registeration() {
               <View>
                 <Select
                   label="Gender *"
-                  value={
-                    requirGender === 'Gender'
-                      ? 'Gender'
-                      : requirGender === 0
-                      ? 'Male'
-                      : 'Female'
+                  placeholder="Require Gender"
+                  value={state.requirGender}
+                  onSelect={index =>
+                    setState({
+                      ...state,
+                      requirGender: requireGenderStatus[index.row],
+                    })
                   }
-                  onSelect={index => setRequirGender(index.row)}
                   style={{marginTop: 20}}>
-                  <SelectItem title="Male" />
-                  <SelectItem title="Female" />
+                  {requireGenderStatus.map(i => (
+                    <SelectItem key={i} title={i} />
+                  ))}
                 </Select>
                 <Input
                   label="Age"
@@ -758,8 +772,13 @@ export default function Registeration() {
                 <Select
                   label="How did you hear about us?"
                   placeholder="Newspaper Ad"
-                  value={referenceData[requrHearAbout]}
-                  onSelect={index => setRequrHearAbout(index.row)}
+                  value={state.requrHearAbout}
+                  onSelect={index =>
+                    setState({
+                      ...state,
+                      requrHearAbout: referenceData[index.row],
+                    })
+                  }
                   style={{marginTop: 20}}>
                   {referenceData.map(i => (
                     <SelectItem key={i} title={i} />
@@ -798,16 +817,70 @@ export default function Registeration() {
               <View style={styles.textflex}>
                 <View style={styles.textNew}></View>
                 <Text style={styles.text}>
-                  Remember if any of the details found false we will cancel your
-                  registration same time.{' '}
+                  Remember if any of the details are found false we will cancel
+                  your registration same time.{' '}
                 </Text>
               </View>
               <View style={styles.textflex}>
                 <View style={styles.textNew}></View>
                 <Text style={styles.text}>
-                  This fee is nonrefundable and nontransferable. You need pay
-                  the rest fee after any kind of
+                  Kindly note your requirements can not be changed once you
+                  submit the form.{' '}
                 </Text>
+              </View>
+              <View style={styles.textflex}>
+                <View style={styles.textNew}></View>
+                <Text style={styles.text}>
+                  This fee is nonrefundable and nontransferable. You need to pay
+                  rest of the fee after any kind of{' '}
+                  <Text style={{fontWeight: 'bold'}}>Rasam</Text>
+                </Text>
+              </View>
+            </View>
+
+            <View>
+              <View>
+                <Text style={styles.mainHead}>REFERENC(E)</Text>
+              </View>
+              <View
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}>
+                <TouchableHighlight
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: 50,
+                    height: 50,
+                    borderWidth: 1,
+                    borderColor: '#2563eb',
+                    borderRadius: 50,
+                    backgroundColor: 'white',
+                  }}
+                  onPress={handleLinkPress}>
+                  <IconLink name="facebook-f" size={25} color="#2563eb" />
+                </TouchableHighlight>
+                <TouchableHighlight
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: 50,
+                    height: 50,
+                    borderWidth: 1,
+                    borderColor: '#dc2626',
+                    borderRadius: 50,
+                    marginLeft: 6,
+                    backgroundColor: 'white',
+                  }}
+                  onPress={InstahandleLinkPress}>
+                  <IconLink name="instagram" size={25} color="#dc2626" />
+                </TouchableHighlight>
               </View>
             </View>
 
